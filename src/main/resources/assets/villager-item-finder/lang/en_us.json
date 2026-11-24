@@ -46,5 +46,10 @@
   "villager-item-finder.error.trade_failed": "Could not open the trade screen.",
   "villager-item-finder.error.break_failed": "Could not break the lectern.",
   "villager-item-finder.error.no_reset": "The villager did not lose its profession (traded before, or bound to another lectern).",
-  "villager-item-finder.error.pickup_failed": "The broken lectern was not picked up and you have no other lectern. Stand closer to the lectern."
+  "villager-item-finder.error.pickup_failed": "The broken lectern was not picked up and you have no other lectern. Stand closer to the lectern.",
+  "villager-item-finder.screen.level.max_price": "Max price (emeralds)",
+  "villager-item-finder.screen.level.max_price_hint": "empty = no limit",
+  "villager-item-finder.screen.level.max_price_tooltip": "The loop only stops if the book costs at most this many emeralds (1-64). Leave empty for no limit.",
+  "villager-item-finder.target.with_price": "%s (max %s emeralds)",
+  "villager-item-finder.loop.too_expensive": "The wanted book was offered but costs more than %s emeralds, continuing."
 }

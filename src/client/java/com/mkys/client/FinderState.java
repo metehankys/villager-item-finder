@@ -20,6 +20,8 @@ public final class FinderState {
 
 	private static @Nullable Holder<Enchantment> targetEnchantment;
 	private static int targetLevel;
+	/** Maximum emerald price for the book; 0 means no limit. Kept when the target changes. */
+	private static int maxPrice;
 
 	private FinderState() {
 	}
@@ -77,16 +79,34 @@ public final class FinderState {
 		return targetEnchantment != null;
 	}
 
-	/** Localized display name of the target, e.g. "Verimlilik V". */
+	public static int getMaxPrice() {
+		return maxPrice;
+	}
+
+	/** @param price maximum emerald price, 0 (or less) for no limit */
+	public static void setMaxPrice(int price) {
+		maxPrice = Math.max(0, price);
+	}
+
+	public static boolean isPriceAccepted(int price) {
+		return maxPrice <= 0 || price <= maxPrice;
+	}
+
+	/** Localized display name of the target, e.g. "Verimlilik V (≤ 20 zümrüt)". */
 	public static Component describeTarget() {
 		if (targetEnchantment == null) {
 			return Component.translatable("villager-item-finder.target.none");
 		}
-		return Enchantment.getFullname(targetEnchantment, targetLevel);
+		Component name = Enchantment.getFullname(targetEnchantment, targetLevel);
+		if (maxPrice <= 0) {
+			return name;
+		}
+		return Component.translatable("villager-item-finder.target.with_price", name, maxPrice);
 	}
 
 	public static void reset() {
 		clearVillager();
 		clearTarget();
+		maxPrice = 0;
 	}
 }

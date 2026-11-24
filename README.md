@@ -10,6 +10,7 @@ Minecraft **26.3** için bir **Fabric** modu. Seçtiğin köylünün kürsüsün
 
 - **Büyü seçme menüsü:** Liste kaydırılarak gezilebilir veya arama kutusuyla aranabilir. Büyü adları oyunun diline göre gösterilir. Aramada büyük/küçük harf ve Türkçe karakterler fark etmez ("isik" yazınca "Işık" da bulunur).
 - **Seviye seçimi:** Seçtiğin büyünün kaç seviyesi varsa o kadar seçenek çıkar (Verimlilik için I–V, Servet için I–III, Tamir için yalnızca I).
+- **Maksimum fiyat:** Seviye ekranında isteğe bağlı bir zümrüt sınırı girilebilir. Aranan kitap bu fiyattan pahalıysa döngü devam eder.
 - **Akıllı kürsü yerleştirme:** Kürsü, seçili köylüye en yakın ve diğer köylülere belirgin şekilde daha uzak olan boş yere konur. Köylülerin yan yana durduğu ticaret salonlarında kürsüyü yanlış köylünün almasını önler.
 - **Otomatik döngü:** Kürsüyü koyar, köylünün kütüphaneci olmasını bekler, ticaret ekranını açıp satılan kitabı okur. Aranan kitap yoksa kürsüyü kırar, yerden alır ve tekrar koyar.
 - **Bulununca durur:** Aranan kitap (seçilen seviye veya daha yükseği) bulununca ses çalar ve ticaret ekranını açık bırakır, hemen satın alabilirsin.
@@ -57,6 +58,7 @@ A **Fabric** mod for Minecraft **26.3** that automatically breaks and re-places 
 
 - **Enchantment menu** with scrolling and search; names follow the game language.
 - **Level picker** that only shows the levels the enchantment actually has.
+- **Max price:** optional emerald limit on the level screen; a matching book above it does not stop the loop.
 - **Smart lectern placement:** the lectern goes to a free spot the selected villager is clearly closest to, so neighbouring villagers in a trading hall don't claim it.
 - **Automatic loop:** place lectern → wait for librarian → open trades and read the book → break, pick up and re-place if it is not the one.
 - **Stops on success** (wanted level or higher), plays a sound and keeps the trade screen open.

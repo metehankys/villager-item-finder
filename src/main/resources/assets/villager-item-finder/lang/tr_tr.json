@@ -46,5 +46,10 @@
   "villager-item-finder.error.trade_failed": "Ticaret ekranı açılamadı.",
   "villager-item-finder.error.break_failed": "Kürsü kırılamadı.",
   "villager-item-finder.error.no_reset": "Köylü mesleğini kaybetmedi (daha önce ticaret yapılmış ya da başka bir kürsüye bağlı).",
-  "villager-item-finder.error.pickup_failed": "Kırılan kürsü yerden alınamadı ve başka kürsün yok. Kürsüye daha yakın dur."
+  "villager-item-finder.error.pickup_failed": "Kırılan kürsü yerden alınamadı ve başka kürsün yok. Kürsüye daha yakın dur.",
+  "villager-item-finder.screen.level.max_price": "Maks. fiyat (zümrüt)",
+  "villager-item-finder.screen.level.max_price_hint": "boş = sınırsız",
+  "villager-item-finder.screen.level.max_price_tooltip": "Döngü yalnızca kitap en fazla bu kadar zümrüt ise durur (1-64). Sınır istemiyorsan boş bırak.",
+  "villager-item-finder.target.with_price": "%s (en fazla %s zümrüt)",
+  "villager-item-finder.loop.too_expensive": "Aranan kitap çıktı ama fiyatı %s zümrütten fazla, devam ediliyor."
 }

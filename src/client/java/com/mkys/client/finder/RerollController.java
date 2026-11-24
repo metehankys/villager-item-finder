@@ -288,14 +288,20 @@ public final class RerollController {
 		List<TradeReader.BookOffer> books = TradeReader.readBooks(menu.getOffers());
 		int wantedLevel = FinderState.getTargetLevel();
 
+		boolean tooExpensive = false;
 		for (TradeReader.BookOffer book : books) {
-			if (TradeReader.matches(book, target, wantedLevel)) {
-				// Success: leave the trade screen open so the player can buy right away.
-				client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.0F));
-				stop(client, Component.translatable("villager-item-finder.loop.success",
-						book.displayName(), book.price(), cycle).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
-				return;
+			if (!TradeReader.matches(book, target, wantedLevel)) {
+				continue;
 			}
+			if (!FinderState.isPriceAccepted(book.price())) {
+				tooExpensive = true;
+				continue;
+			}
+			// Success: leave the trade screen open so the player can buy right away.
+			client.getSoundManager().play(SimpleSoundInstance.forUI(SoundEvents.PLAYER_LEVELUP, 1.0F));
+			stop(client, Component.translatable("villager-item-finder.loop.success",
+					book.displayName(), book.price(), cycle).withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
+			return;
 		}
 
 		MutableComponent found;
@@ -313,6 +319,10 @@ public final class RerollController {
 		}
 		player.sendSystemMessage(Component.translatable("villager-item-finder.loop.attempt", cycle, found)
 				.withStyle(ChatFormatting.GRAY));
+		if (tooExpensive) {
+			player.sendSystemMessage(Component.translatable("villager-item-finder.loop.too_expensive",
+					FinderState.getMaxPrice()).withStyle(ChatFormatting.YELLOW));
+		}
 
 		player.closeContainer();
 		toolSelected = false;
