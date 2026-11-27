@@ -41,6 +41,8 @@ public final class RerollController {
 	// Timeouts in ticks (20 ticks = 1 second).
 	private static final int PLACE_CONFIRM_TIMEOUT = 20;
 	private static final int MAX_PLACE_ATTEMPTS = 3;
+	/** Attempts (each ~3 ticks apart) to get the lectern into the hand before giving up. */
+	private static final int PLACE_SELECT_TIMEOUT = 20;
 	private static final int PROFESSION_TIMEOUT = 30 * 20;
 	private static final int TRADE_OPEN_TIMEOUT = 3 * 20;
 	private static final int MAX_TRADE_ATTEMPTS = 3;
@@ -211,7 +213,13 @@ public final class RerollController {
 			return;
 		}
 		if (!PlayerActions.selectItem(client, player, Items.LECTERN)) {
-			delay = 2; // inventory swap sent, try again shortly
+			// Selection changed / inventory swap sent: try again shortly. PLACE starts with timer 0,
+			// so a negative timer counts how long we have been stuck here (never wait silently forever).
+			if (timer < -PLACE_SELECT_TIMEOUT) {
+				fail(client, "villager-item-finder.error.place_failed");
+				return;
+			}
+			delay = 2;
 			return;
 		}
 		LecternLocator.Placement placement = LecternLocator.placementFor(client.level, player, lecternPos);

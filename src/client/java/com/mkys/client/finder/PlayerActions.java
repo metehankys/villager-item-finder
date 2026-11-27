@@ -5,6 +5,8 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.arguments.EntityAnchorArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.protocol.game.ServerboundInteractPacket;
+import net.minecraft.network.protocol.game.ServerboundUseItemOnPacket;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Inventory;
@@ -41,8 +43,9 @@ public final class PlayerActions {
 	/**
 	 * Makes sure {@code item} is the selected hotbar item.
 	 *
-	 * @return {@code true} if it is selected now, {@code false} if an inventory swap was sent
-	 * (call again next tick) or the item is missing.
+	 * @return {@code true} if it was already selected, {@code false} if the selection changed or an
+	 * inventory swap was sent (call again next tick, so the server learns the new held item first)
+	 * or the item is missing.
 	 */
 	public static boolean selectItem(Minecraft client, LocalPlayer player, Item item) {
 		Inventory inv = player.getInventory();
@@ -51,8 +54,9 @@ public final class PlayerActions {
 		}
 		for (int i = 0; i < HOTBAR_SIZE; i++) {
 			if (inv.getItem(i).getItem() == item) {
+				// The held slot is synced to the server at the start of the next tick.
 				inv.setSelectedSlot(i);
-				return true;
+				return false;
 			}
 		}
 		// Not in the hotbar: swap it from the main inventory into the selected hotbar slot.
@@ -85,9 +89,15 @@ public final class PlayerActions {
 		inv.setSelectedSlot(bestSlot);
 	}
 
-	public static boolean placeBlock(Minecraft client, LocalPlayer player, LecternLocator.Placement placement) {
+	public static void placeBlock(Minecraft client, LocalPlayer player, LecternLocator.Placement placement) {
 		lookAt(player, placement.hitVec());
-		return client.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, placement.toHitResult()).consumesAction();
+		if (FreecamCompat.isFreecamActive()) {
+			// Freecam cancels useItemOn; send the packet ourselves. The server places the block and
+			// syncs it back. Sequence 0 only affects client-side prediction acks.
+			player.connection.send(new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, placement.toHitResult(), 0));
+			return;
+		}
+		client.gameMode.useItemOn(player, InteractionHand.MAIN_HAND, placement.toHitResult());
 	}
 
 	/** Face of the block the player is looking at (used for mining). */
@@ -113,6 +123,13 @@ public final class PlayerActions {
 	public static void interact(Minecraft client, LocalPlayer player, Entity entity) {
 		Vec3 target = entity.getBoundingBox().getCenter();
 		lookAt(player, target);
+		if (FreecamCompat.isFreecamActive()) {
+			// Freecam cancels interact; send the same packet vanilla would (location is entity-relative).
+			Vec3 relative = target.subtract(entity.getX(), entity.getY(), entity.getZ());
+			player.connection.send(new ServerboundInteractPacket(entity.getId(), InteractionHand.MAIN_HAND, relative,
+					player.isShiftKeyDown()));
+			return;
+		}
 		client.gameMode.interact(player, entity, new EntityHitResult(entity, target), InteractionHand.MAIN_HAND);
 	}
 }
